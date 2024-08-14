@@ -2,91 +2,77 @@
  * Copyright (c) 2024 Your Company Name
  * All rights reserved.
  */
-/* En todos los lugares donde están dos diagonales no he logrado que se componga
-como por ejemplo no he logrado que se quite la imagen de donde debería ir el texto,
-tampoco he logrado que aparezca el logo de Batman cuando se esté escribiendo y no he
-logrado que los mensajes del resultado se coloquen así como entre otras cosas más
-*/
-
-const d = document;
-const textarea = d.getElementById("miTextarea");
-const muñeco = d.querySelector(".result_img");
-const carga = d.querySelector(".loader");
-const result_text = d.querySelector("#result_text");
-const result_title = d.querySelector(".result_title");
-const buttonencrip = d.getElementById("encriptarBtn");
-const buttondesencrip = d.getElementById("desencriptarBtn");
-const buttoncopiar = d.getElementById("copiarBtn");
-
-const llaves = [
-    ["e", "enter"],
-    ["i", "imes"],
-    ["o", "ober"],
-    ["u", "ufat"],
-    ["a", "ai"],
-];
-
-function encriptarMensaje(mensaje) {
-    let mensajeEncriptado = "";
-        for (let i = 0; i < mensaje.length; i++) {
-                let letra = mensaje[i];
-                let encriptada = letra;
-                for (let j = 0; j < llaves.length; j++) {
-                        if (letra === llaves[j][0]) {
-                            encriptada = llaves[j][1];
-                            break;
-                        }
-                    }
-                mensajeEncriptado += encriptada;
-            }
-                return mensajeEncriptado;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const textarea = document.getElementById('miTextarea');
+    const resultText = document.getElementById('result_text');
+    const resultTitle = document.querySelector('.result_title');
+    const copiarBtn = document.getElementById('copiarBtn');
+    const carga = document.getElementById('carga');
     
-function desencriptarMensaje(mensaje) {
-let mensajeDesencriptado = mensaje;
+    const encriptarBtn = document.getElementById('encriptarBtn');
+    const desencriptarBtn = document.getElementById('desencriptarBtn');
+    
+    // Función para validar el texto
+    function validarTexto(texto) {
+        return /^[a-z\s]+$/.test(texto);
+    }
+    
+    // Función para encriptar el texto
+    function encriptarTexto(texto) {
+        // Ejemplo de encriptación: reemplazar cada letra por una combinación específica
+        return texto
+            .replace(/e/, 'enter')
+            .replace(/i/, 'imes')
+            .replace(/a/, 'ai')
+            .replace(/o/, 'ober')
+            .replace(/u/, 'ufat');
+    }
 
-for (let i = 0; i < llaves.length; i++) {
-    let regex = new RegExp(llaves[i][1], "g");
-    mensajeDesencriptado = mensajeDesencriptado.replace(regex, llaves[i][0]);
-}
+    // Función para desencriptar el texto
+    function desencriptarTexto(texto) {
+        // Ejemplo de desencriptación, revertir el proceso de encriptación
+        return texto
+            .replace(/enter/, 'e')
+            .replace(/imes/, 'i')
+            .replace(/ai/, 'a')
+            .replace(/ober/, 'o')
+            .replace(/ufat/, 'u');
+    }
 
-return mensajeDesencriptado;
-}
+    // Función para mostrar el resultado
+    function mostrarResultado(texto) {
+        resultTitle.textContent = 'Texto encriptado:';
+        resultText.textContent = texto;
+        copiarBtn.classList.remove('hidden');
+        resultTitle.classList.remove('hidden');
+        resultText.classList.remove('hidden');
+    }
 
-// Tendría que ocultar los elementos pero no lo hace
-textarea.addEventListener("input", (e) => {
-    muñeco.style.display = "block";
-    carga.classList.remove("hidden");
-    result_title.textContent = "capturando mensaje";
-    result_text.textContent = "";
-});
+    // Función para copiar el texto al portapapeles
+    copiarBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(resultText.textContent)
+            .then(() => alert('Texto copiado al portapapeles'))
+            .catch(err => console.error('Error al copiar el texto: ', err));
+    });
 
-// Si funciona el botón encriptar pero no aparece el mensaje "el resultado es:" y no se oculta la imagen ni el texto del recuadro
-buttonencrip.addEventListener("click", (e) => {
-    e.preventDefault();
-    let mensaje = textarea.value.toLowerCase();
-    let mensajeEncriptado = encriptarMensaje(mensaje);
-    result_text.textContent = mensajeEncriptado;
-    buttoncopiar.classList.remove("hidden");
-    result_title.textContent = "el resultado es:";
-    /* -- */
-    muñeco.style.display = "block";
-    carga.classList.add("hidden");
-});
+    // Manejo de eventos para los botones
+    encriptarBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const texto = textarea.value;
+        if (validarTexto(texto)) {
+            mostrarResultado(encriptarTexto(texto));
+        } else {
+            alert('El texto solo puede contener letras minúsculas y espacios.');
+        }
+    });
 
-buttondesencrip.addEventListener("click", (e) => {
-    e.preventDefault();
-    let mensaje = textarea.value.toLowerCase();
-    let mensajeDesencriptado = desencriptarMensaje(mensaje);
-    result_text.textContent = mensajeDesencriptado;
-    buttoncopiar.classList.remove("hidden");
-});
-
-buttoncopiar.addEventListener("click", () => {
-    let textoCopiado = result_text.textContent;
-    navigator.clipboard.writeText(textoCopiado).then(() => {
-        muñeco.style.display = "block";
-        carga.classList.add("hidden");
-        result_title.textContent = "el texto se copió";
+    desencriptarBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const texto = textarea.value;
+        if (validarTexto(texto)) {
+            mostrarResultado(desencriptarTexto(texto));
+        } else {
+            alert('El texto solo puede contener letras minúsculas y espacios.');
+        }
     });
 });
