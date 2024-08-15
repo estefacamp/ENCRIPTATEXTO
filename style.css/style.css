@@ -95,6 +95,7 @@ header img {
     margin-top: -50px;
     border: 1px solid var(--dark-blue);
     display: flex;}
+    
 .result {
     background-color: white;
     display: flex;
